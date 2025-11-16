@@ -136,11 +136,11 @@
     // Sample Images Management System
     // TO ADD NEW SAMPLES: Just add the filename to this array (newest first)
     const allSamples = [
+      'sample23.png',
+      'sample22.png',
       'sample21.png',
       'sample20.png',
       'sample19.png',
-      'sample18.png',
-      'sample17.png',
       'sample16.png',
       'sample15.png',
       'sample14.png',
@@ -168,11 +168,26 @@
       
       // Add all sample images
       allSamples.forEach((filename, index) => {
+        // Create wrapper div for positioning the badge
+        const wrapper = document.createElement('div');
+        wrapper.className = 'relative';
+        
         const img = document.createElement('img');
         img.src = `media/${filename}`;
         img.alt = `Sample ${index + 1}`;
         img.className = 'w-56 object-contain transition-transform duration-500 hover:scale-[1.03] hover:shadow-2xl hover:shadow-brand-500/30 rounded-2xl shadow border border-slate-200/60 revealable';
-        container.appendChild(img);
+        
+        wrapper.appendChild(img);
+        
+        // Add "NEW" badge for the first (most recent) sample
+        if (index === 0) {
+          const badge = document.createElement('div');
+          badge.className = 'absolute -top-2 -right-2 bg-gradient-to-r from-accent-500 to-pink-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg border-2 border-white animate-pulse';
+          badge.textContent = 'NEW';
+          wrapper.appendChild(badge);
+        }
+        
+        container.appendChild(wrapper);
       });
       
       // Add "More Designs Coming Soon" card at the end
