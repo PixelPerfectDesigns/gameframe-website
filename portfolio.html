@@ -88,6 +88,8 @@
   <!-- Portfolio Gallery -->
   <section class="py-20 bg-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+      
       <!-- Mobile scroll hint -->
       <div class="text-center mb-6 sm:hidden">
         <p class="text-slate-600 text-sm flex items-center justify-center gap-2">
@@ -102,21 +104,8 @@
       </div>
       
       <div class="gallery-container relative">
-        <!-- Left scroll arrow for desktop -->
-        <button id="scroll-left" class="hidden sm:flex absolute left-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white/90 hover:bg-white shadow-lg rounded-full items-center justify-center transition-all duration-300 opacity-0" aria-label="Scroll left">
-          <svg class="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-          </svg>
-        </button>
-        
-        <!-- Right scroll arrow for desktop -->
-        <button id="scroll-right" class="hidden sm:flex absolute right-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white/90 hover:bg-white shadow-lg rounded-full items-center justify-center transition-all duration-300" aria-label="Scroll right">
-          <svg class="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-          </svg>
-        </button>
-        
-        <div id="portfolio-gallery" class="flex gap-4 overflow-x-auto pb-4 sm:flex-wrap sm:justify-center sm:overflow-visible sm:pb-0 sm:gap-6 snap-x snap-mandatory" style="-webkit-overflow-scrolling: touch; scrollbar-width: none; -ms-overflow-style: none;">
+
+        <div id="portfolio-gallery" class="flex gap-4 overflow-x-auto pb-4 sm:grid sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 sm:overflow-visible sm:pb-0 sm:gap-6" style="-webkit-overflow-scrolling: touch; scrollbar-width: none; -ms-overflow-style: none;">
           <!-- All portfolio samples will be loaded here by JavaScript -->
         </div>
       </div>
@@ -336,7 +325,7 @@
         const img = document.createElement('img');
         img.src = `media/${filename}`;
         img.alt = `Sample ${index + 1}`;
-        img.className = 'w-[calc(100vw-2rem)] max-w-sm sm:w-56 flex-shrink-0 snap-center object-contain transition-transform duration-500 sm:hover:scale-[1.03] hover:shadow-2xl hover:shadow-brand-500/30 rounded-2xl shadow border border-slate-200/60';
+        img.className = 'w-[calc(100vw-2rem)] max-w-sm sm:w-full flex-shrink-0 sm:flex-shrink object-contain transition-transform duration-500 sm:hover:scale-[1.03] hover:shadow-2xl hover:shadow-brand-500/30 rounded-2xl shadow border border-slate-200/60';
         
         wrapper.appendChild(img);
         
@@ -345,7 +334,7 @@
       
       // Add "More Designs Coming Soon" card at the end
       const comingSoonCard = document.createElement('div');
-      comingSoonCard.className = 'w-56 bg-gradient-to-br from-slate-100 to-slate-200 rounded-2xl shadow border border-slate-200/60 flex items-center justify-center transition-transform duration-500 hover:scale-[1.03] hover:shadow-2xl hover:shadow-brand-500/30 revealable';
+      comingSoonCard.className = 'w-[calc(100vw-2rem)] max-w-sm sm:w-full bg-gradient-to-br from-slate-100 to-slate-200 rounded-2xl shadow border border-slate-200/60 flex items-center justify-center transition-transform duration-500 hover:scale-[1.03] hover:shadow-2xl hover:shadow-brand-500/30 revealable';
       comingSoonCard.style.aspectRatio = '2.5/3.5';
       comingSoonCard.innerHTML = `
         <div class="text-center p-6">
@@ -384,35 +373,9 @@
       }, 100);
     });
     
-    // Setup scroll arrows for desktop
+    // Simple function for any future scroll enhancements
     function setupScrollArrows() {
-      const gallery = document.getElementById('portfolio-gallery');
-      const leftBtn = document.getElementById('scroll-left');
-      const rightBtn = document.getElementById('scroll-right');
-      
-      if (!gallery || !leftBtn || !rightBtn) return;
-      
-      // Show/hide arrows based on scroll position
-      function updateArrowVisibility() {
-        const { scrollLeft, scrollWidth, clientWidth } = gallery;
-        leftBtn.style.opacity = scrollLeft > 0 ? '1' : '0';
-        rightBtn.style.opacity = scrollLeft < scrollWidth - clientWidth - 10 ? '1' : '0';
-      }
-      
-      // Scroll functionality
-      leftBtn.addEventListener('click', () => {
-        gallery.scrollBy({ left: -300, behavior: 'smooth' });
-      });
-      
-      rightBtn.addEventListener('click', () => {
-        gallery.scrollBy({ left: 300, behavior: 'smooth' });
-      });
-      
-      // Update arrow visibility on scroll
-      gallery.addEventListener('scroll', updateArrowVisibility);
-      
-      // Initial arrow visibility update
-      setTimeout(updateArrowVisibility, 100);
+      // Function kept for future enhancements if needed
     }
   </script>
 </body>
