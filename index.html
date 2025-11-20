@@ -514,7 +514,7 @@
               <div class="w-20 h-20 bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-600 rounded-full flex items-center justify-center mx-auto shadow-xl shadow-blue-500/40 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 relative z-10 border-2 border-white">
                 <span class="text-3xl">📦</span>
               </div>
-              <div class="absolute -top-2 -right-2 w-8 h-8 bg-gradient-to-br from-blue-400 to-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold shadow-lg border-2 border-white">1</div>
+              <div class="absolute -top-1 -left-1 w-8 h-8 bg-gradient-to-br from-blue-400 to-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold shadow-lg border-2 border-white">1</div>
             </div>
             <h3 class="text-xl font-bold text-slate-900 mb-3">Choose Package</h3>
             <p class="text-slate-600 text-sm leading-relaxed">Pick your perfect size and format from our four package options</p>
@@ -526,7 +526,7 @@
               <div class="w-20 h-20 bg-gradient-to-br from-green-500 via-emerald-600 to-teal-600 rounded-full flex items-center justify-center mx-auto shadow-xl shadow-green-500/40 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 relative z-10 border-2 border-white">
                 <span class="text-3xl">📝</span>
               </div>
-              <div class="absolute -top-2 -right-2 w-8 h-8 bg-gradient-to-br from-green-400 to-green-600 text-white rounded-full flex items-center justify-center text-sm font-bold shadow-lg border-2 border-white">2</div>
+              <div class="absolute -top-1 -left-1 w-8 h-8 bg-gradient-to-br from-green-400 to-green-600 text-white rounded-full flex items-center justify-center text-sm font-bold shadow-lg border-2 border-white">2</div>
             </div>
             <h3 class="text-xl font-bold text-slate-900 mb-3">Submit & Pay</h3>
             <p class="text-slate-600 text-sm leading-relaxed mb-4">Fill out form, upload images, and pay securely with:</p>
@@ -554,7 +554,7 @@
               <div class="w-20 h-20 bg-gradient-to-br from-purple-500 via-violet-600 to-purple-700 rounded-full flex items-center justify-center mx-auto shadow-xl shadow-purple-500/40 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 relative z-10 border-2 border-white">
                 <span class="text-3xl">👀</span>
               </div>
-              <div class="absolute -top-2 -right-2 w-8 h-8 bg-gradient-to-br from-purple-400 to-purple-600 text-white rounded-full flex items-center justify-center text-sm font-bold shadow-lg border-2 border-white">3</div>
+              <div class="absolute -top-1 -left-1 w-8 h-8 bg-gradient-to-br from-purple-400 to-purple-600 text-white rounded-full flex items-center justify-center text-sm font-bold shadow-lg border-2 border-white">3</div>
             </div>
             <h3 class="text-xl font-bold text-slate-900 mb-3">Review Draft</h3>
             <p class="text-slate-600 text-sm leading-relaxed">Get watermarked preview within 2-3 days. Approve or request revisions</p>
@@ -566,7 +566,7 @@
               <div class="w-20 h-20 bg-gradient-to-br from-orange-500 via-red-500 to-pink-600 rounded-full flex items-center justify-center mx-auto shadow-xl shadow-orange-500/40 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 relative z-10 border-2 border-white">
                 <span class="text-3xl">✏️</span>
               </div>
-              <div class="absolute -top-2 -right-2 w-8 h-8 bg-gradient-to-br from-orange-400 to-orange-600 text-white rounded-full flex items-center justify-center text-sm font-bold shadow-lg border-2 border-white">4</div>
+              <div class="absolute -top-1 -left-1 w-8 h-8 bg-gradient-to-br from-orange-400 to-orange-600 text-white rounded-full flex items-center justify-center text-sm font-bold shadow-lg border-2 border-white">4</div>
             </div>
             <h3 class="text-xl font-bold text-slate-900 mb-3">Perfect It</h3>
             <p class="text-slate-600 text-sm leading-relaxed">Minor revisions take just 1 day. We'll keep perfecting until you love it!</p>
@@ -578,7 +578,7 @@
               <div class="w-20 h-20 bg-gradient-to-br from-brand-500 via-brand-600 to-cyan-600 rounded-full flex items-center justify-center mx-auto shadow-xl shadow-brand-500/40 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 relative z-10 border-2 border-white">
                 <span class="text-3xl">🚚</span>
               </div>
-              <div class="absolute -top-2 -right-2 w-8 h-8 bg-gradient-to-br from-brand-400 to-brand-600 text-white rounded-full flex items-center justify-center text-sm font-bold shadow-lg border-2 border-white">5</div>
+              <div class="absolute -top-1 -left-1 w-8 h-8 bg-gradient-to-br from-brand-400 to-brand-600 text-white rounded-full flex items-center justify-center text-sm font-bold shadow-lg border-2 border-white">5</div>
             </div>
             <h3 class="text-xl font-bold text-slate-900 mb-3">Get Your Cards</h3>
             <p class="text-slate-600 text-sm leading-relaxed">Digital copy instantly. Prints ship same day as approval directly to you</p>
@@ -747,54 +747,26 @@
     // Configuration
     const maxRecentSamples = 5; // How many samples to show on main page
 
-    // Load recent samples for main page with mobile infinite loop
+    // Load recent samples for main page
     function loadRecentSamples() {
       const container = document.getElementById('recent-samples');
       if (!container) return;
       
       const recentSamples = allSamples.slice(0, maxRecentSamples);
       
-      // Check if we're on mobile (screen width < 640px)
-      const isMobile = window.innerWidth < 640;
-      
-      if (isMobile) {
-        // Create images three times for infinite loop on mobile
-        const allImages = [...recentSamples, ...recentSamples, ...recentSamples];
+      // Create images once - no infinite loop
+      recentSamples.forEach((filename, index) => {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'relative';
         
-        allImages.forEach((filename, index) => {
-          const wrapper = document.createElement('div');
-          wrapper.className = 'relative';
-          
-          const img = document.createElement('img');
-          img.src = `media/${filename}`;
-          img.alt = `Sample ${(index % recentSamples.length) + 1}`;
-          img.className = 'w-[calc(100vw-2rem)] max-w-sm sm:w-56 flex-shrink-0 snap-center object-contain transition-transform duration-500 sm:hover:scale-[1.03] hover:shadow-2xl hover:shadow-brand-500/30 rounded-2xl shadow border border-slate-200/60';
-          
-          wrapper.appendChild(img);
-          container.appendChild(wrapper);
-        });
+        const img = document.createElement('img');
+        img.src = `media/${filename}`;
+        img.alt = `Sample ${index + 1}`;
+        img.className = 'w-[calc(100vw-2rem)] max-w-sm sm:w-56 flex-shrink-0 snap-center object-contain transition-transform duration-500 sm:hover:scale-[1.03] hover:shadow-2xl hover:shadow-brand-500/30 rounded-2xl shadow border border-slate-200/60';
         
-        // Set initial scroll position to the middle set of images for infinite scroll
-        setTimeout(() => {
-          const containerWidth = container.scrollWidth / 3;
-          container.scrollLeft = containerWidth;
-          setupInfiniteScroll(container, recentSamples.length);
-        }, 50);
-      } else {
-        // Desktop: show images only once in grid layout
-        recentSamples.forEach((filename, index) => {
-          const wrapper = document.createElement('div');
-          wrapper.className = 'relative';
-          
-          const img = document.createElement('img');
-          img.src = `media/${filename}`;
-          img.alt = `Sample ${index + 1}`;
-          img.className = 'w-[calc(100vw-2rem)] max-w-sm sm:w-56 flex-shrink-0 snap-center object-contain transition-transform duration-500 sm:hover:scale-[1.03] hover:shadow-2xl hover:shadow-brand-500/30 rounded-2xl shadow border border-slate-200/60';
-          
-          wrapper.appendChild(img);
-          container.appendChild(wrapper);
-        });
-      }
+        wrapper.appendChild(img);
+        container.appendChild(wrapper);
+      });
     }
 
     // Initialize when page loads
@@ -816,35 +788,9 @@
         observer.observe(el);
       });
     });
+
     
-    // Setup infinite scroll for seamless looping
-    function setupInfiniteScroll(container, itemCount) {
-      let isScrolling = false;
-      
-      container.addEventListener('scroll', () => {
-        if (isScrolling) return;
-        
-        const scrollLeft = container.scrollLeft;
-        const scrollWidth = container.scrollWidth;
-        const clientWidth = container.clientWidth;
-        const sectionWidth = scrollWidth / 3;
-        
-        // If scrolled to the beginning of first section, jump to beginning of last section
-        if (scrollLeft <= 0) {
-          isScrolling = true;
-          container.scrollLeft = sectionWidth * 2;
-          setTimeout(() => { isScrolling = false; }, 50);
-        }
-        // If scrolled to the end of last section, jump to end of first section  
-        else if (scrollLeft >= scrollWidth - clientWidth) {
-          isScrolling = true;
-          container.scrollLeft = sectionWidth;
-          setTimeout(() => { isScrolling = false; }, 50);
-        }
-      });
-    }
-    
-    // Setup scroll arrows for recent samples with responsive behavior
+    // Setup scroll arrows for recent samples
     function setupSamplesScrollArrows() {
       const gallery = document.getElementById('recent-samples');
       const leftBtn = document.getElementById('samples-scroll-left');
@@ -852,20 +798,11 @@
       
       if (!gallery || !leftBtn || !rightBtn) return;
       
-      const isMobile = window.innerWidth < 640;
-      
-      // Show/hide arrows based on scroll position and screen size
+      // Show/hide arrows based on scroll position
       function updateArrowVisibility() {
-        if (isMobile) {
-          // Mobile: infinite scroll - always show both arrows
-          leftBtn.style.opacity = '1';
-          rightBtn.style.opacity = '1';
-        } else {
-          // Desktop: normal scroll - show based on position
-          const { scrollLeft, scrollWidth, clientWidth } = gallery;
-          leftBtn.style.opacity = scrollLeft > 0 ? '1' : '0';
-          rightBtn.style.opacity = scrollLeft < scrollWidth - clientWidth - 10 ? '1' : '0';
-        }
+        const { scrollLeft, scrollWidth, clientWidth } = gallery;
+        leftBtn.style.opacity = scrollLeft > 0 ? '1' : '0';
+        rightBtn.style.opacity = scrollLeft < scrollWidth - clientWidth - 10 ? '1' : '0';
       }
       
       // Scroll functionality
