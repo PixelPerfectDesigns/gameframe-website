@@ -26,6 +26,28 @@
     .hover-glow:hover { box-shadow: 0 10px 30px rgba(235,42,116,.35), 0 6px 16px rgba(2,6,23,.35); transform: translateY(-2px); }
     .revealable { opacity: 0; transform: translateY(12px); transition: opacity .6s ease, transform .6s cubic-bezier(.22,1,.36,1); }
     .revealed { opacity: 1; transform: none; }
+    
+    /* Hide scrollbar for horizontal scroll */
+    #recent-samples::-webkit-scrollbar { display: none; }
+    #recent-samples { scrollbar-width: none; -ms-overflow-style: none; }
+    
+    /* Fade effect to indicate more content */
+    .samples-container { position: relative; }
+    .samples-container::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 20px;
+      height: 100%;
+      background: linear-gradient(to right, transparent, rgba(248, 250, 252, 0.8));
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    @media (max-width: 640px) {
+      .samples-container::after { opacity: 1; }
+    }
   </style>
   <style>
     @keyframes fade-in-up {
@@ -140,8 +162,11 @@
   <!-- Samples -->
   <section id="samples" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
     <h2 class="text-2xl sm:text-3xl font-bold text-center">Recent Samples</h2>
-    <div id="recent-samples" class="mt-6 flex flex-wrap justify-center gap-6">
-      <!-- Recent samples will be loaded here by JavaScript -->
+    <div class="mt-6 samples-container">
+      <!-- Mobile: Horizontal scroll -->
+      <div id="recent-samples" class="flex gap-4 overflow-x-auto pb-4 sm:flex-wrap sm:justify-center sm:overflow-visible sm:pb-0" style="-webkit-overflow-scrolling: touch; scrollbar-width: none; -ms-overflow-style: none;">
+        <!-- Recent samples will be loaded here by JavaScript -->
+      </div>
     </div>
     
     <!-- Portfolio Button -->
@@ -770,7 +795,7 @@
         const img = document.createElement('img');
         img.src = `media/${filename}`;
         img.alt = `Sample ${index + 1}`;
-        img.className = 'w-56 object-contain transition-transform duration-500 hover:scale-[1.03] hover:shadow-2xl hover:shadow-brand-500/30 rounded-2xl shadow border border-slate-200/60';
+        img.className = 'w-48 sm:w-56 flex-shrink-0 object-contain transition-transform duration-500 hover:scale-[1.03] hover:shadow-2xl hover:shadow-brand-500/30 rounded-2xl shadow border border-slate-200/60';
         
         wrapper.appendChild(img);
         
@@ -807,8 +832,8 @@
   </script>
 
   <!-- Sticky Facebook Messenger Button -->
-  <div class="fixed bottom-6 right-6 z-50">
-    <a href="https://m.me/AlexJStaples" target="_blank" class="group flex items-center justify-center w-14 h-14 bg-blue-600 hover:bg-blue-700 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110" aria-label="Message us on Facebook">
+  <div id="messenger-container" class="fixed bottom-6 right-6 z-50 transition-all duration-300 cursor-move" style="touch-action: none;">
+    <a href="https://m.me/AlexJStaples" target="_blank" id="messenger-button" class="group flex items-center justify-center w-14 h-14 bg-blue-600 hover:bg-blue-700 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110" aria-label="Message us on Facebook">
       <svg class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
         <path d="M12 0C5.374 0 0 4.974 0 11.111c0 3.498 1.744 6.614 4.469 8.654V24l4.088-2.242c1.092.301 2.246.464 3.443.464 6.626 0 12-4.974 12-11.111C24 4.974 18.626 0 12 0zm1.191 14.963l-3.055-3.26-5.963 3.26L10.732 8l3.131 3.26L19.732 8l-6.541 6.963z"/>
       </svg>
@@ -822,6 +847,122 @@
       </div>
     </a>
   </div>
+
+  <!-- Messenger Drag & Auto-hide Script -->
+  <script>
+    (function() {
+      const container = document.getElementById('messenger-container');
+      const button = document.getElementById('messenger-button');
+      let isDragging = false;
+      let dragStartY = 0;
+      let containerStartY = 0;
+      let hideTimer = null;
+      let isHidden = false;
+      
+      // Auto-hide functionality
+      function resetHideTimer() {
+        clearTimeout(hideTimer);
+        if (isHidden) {
+          showMessenger();
+        }
+        hideTimer = setTimeout(hideMessenger, 60000); // Hide after 1 minute
+      }
+      
+      function hideMessenger() {
+        if (!isDragging) {
+          container.style.transform = 'translateX(calc(100% - 16px))';
+          container.style.opacity = '0.7';
+          isHidden = true;
+        }
+      }
+      
+      function showMessenger() {
+        container.style.transform = 'translateX(0)';
+        container.style.opacity = '1';
+        isHidden = false;
+      }
+      
+      // Drag functionality
+      function handleStart(e) {
+        e.preventDefault();
+        isDragging = true;
+        container.style.transition = 'none';
+        
+        const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+        dragStartY = clientY;
+        
+        const rect = container.getBoundingClientRect();
+        containerStartY = rect.top;
+        
+        resetHideTimer();
+      }
+      
+      function handleMove(e) {
+        if (!isDragging) return;
+        e.preventDefault();
+        
+        const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+        const deltaY = clientY - dragStartY;
+        const newY = containerStartY + deltaY;
+        
+        // Constrain to viewport bounds
+        const minY = 20; // 20px from top
+        const maxY = window.innerHeight - container.offsetHeight - 20; // 20px from bottom
+        const constrainedY = Math.max(minY, Math.min(maxY, newY));
+        
+        container.style.top = constrainedY + 'px';
+        container.style.bottom = 'auto';
+      }
+      
+      function handleEnd(e) {
+        if (!isDragging) return;
+        isDragging = false;
+        container.style.transition = 'all 0.3s ease';
+        resetHideTimer();
+      }
+      
+      // Prevent click when dragging
+      button.addEventListener('click', function(e) {
+        if (Math.abs(Date.now() - (window.lastDragEnd || 0)) < 200) {
+          e.preventDefault();
+          e.stopPropagation();
+          return false;
+        }
+      });
+      
+      // Mouse events
+      container.addEventListener('mousedown', handleStart);
+      document.addEventListener('mousemove', handleMove);
+      document.addEventListener('mouseup', function(e) {
+        handleEnd(e);
+        window.lastDragEnd = Date.now();
+      });
+      
+      // Touch events
+      container.addEventListener('touchstart', handleStart, { passive: false });
+      document.addEventListener('touchmove', handleMove, { passive: false });
+      document.addEventListener('touchend', function(e) {
+        handleEnd(e);
+        window.lastDragEnd = Date.now();
+      });
+      
+      // Show on hover when hidden
+      container.addEventListener('mouseenter', function() {
+        if (isHidden) {
+          showMessenger();
+          resetHideTimer();
+        }
+      });
+      
+      // Reset timer on any user interaction
+      document.addEventListener('mousemove', resetHideTimer);
+      document.addEventListener('click', resetHideTimer);
+      document.addEventListener('scroll', resetHideTimer);
+      
+      // Initialize timer
+      resetHideTimer();
+    })();
+  </script>
 
   <!-- Hash Navigation Handler -->
   <script>
