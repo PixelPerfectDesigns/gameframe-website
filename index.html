@@ -827,7 +827,9 @@
   <script>
     // Handle hash navigation when coming from other pages
     window.addEventListener('load', function() {
-      if (window.location.hash) {
+      // Only scroll to hash if there's a referrer (coming from another page)
+      // This prevents auto-scrolling on direct page loads or mobile refreshes
+      if (window.location.hash && document.referrer) {
         setTimeout(function() {
           const target = document.querySelector(window.location.hash);
           if (target) {
