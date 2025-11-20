@@ -31,7 +31,7 @@
     #recent-samples::-webkit-scrollbar { display: none; }
     #recent-samples { scrollbar-width: none; -ms-overflow-style: none; }
     
-    /* Fade effect to indicate more content */
+    /* Fade effect to indicate more content on desktop only */
     .samples-container { position: relative; }
     .samples-container::after {
       content: '';
@@ -45,8 +45,15 @@
       opacity: 0;
       transition: opacity 0.3s ease;
     }
-    @media (max-width: 640px) {
+    @media (min-width: 640px) {
       .samples-container::after { opacity: 1; }
+    }
+    
+    /* Smooth snap scrolling for mobile carousel */
+    @supports (scroll-snap-type: x mandatory) {
+      #recent-samples {
+        scroll-snap-type: x mandatory;
+      }
     }
   </style>
   <style>
@@ -163,8 +170,8 @@
   <section id="samples" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
     <h2 class="text-2xl sm:text-3xl font-bold text-center">Recent Samples</h2>
     <div class="mt-6 samples-container">
-      <!-- Mobile: Horizontal scroll -->
-      <div id="recent-samples" class="flex gap-4 overflow-x-auto pb-4 sm:flex-wrap sm:justify-center sm:overflow-visible sm:pb-0" style="-webkit-overflow-scrolling: touch; scrollbar-width: none; -ms-overflow-style: none;">
+      <!-- Mobile: Full-width carousel -->
+      <div id="recent-samples" class="flex gap-4 overflow-x-auto pb-4 sm:flex-wrap sm:justify-center sm:overflow-visible sm:pb-0 sm:gap-6 snap-x snap-mandatory" style="-webkit-overflow-scrolling: touch; scrollbar-width: none; -ms-overflow-style: none;">
         <!-- Recent samples will be loaded here by JavaScript -->
       </div>
     </div>
@@ -795,17 +802,9 @@
         const img = document.createElement('img');
         img.src = `media/${filename}`;
         img.alt = `Sample ${index + 1}`;
-        img.className = 'w-48 sm:w-56 flex-shrink-0 object-contain transition-transform duration-500 hover:scale-[1.03] hover:shadow-2xl hover:shadow-brand-500/30 rounded-2xl shadow border border-slate-200/60';
+        img.className = 'w-[calc(100vw-2rem)] max-w-sm sm:w-56 flex-shrink-0 snap-center object-contain transition-transform duration-500 hover:scale-[1.03] hover:shadow-2xl hover:shadow-brand-500/30 rounded-2xl shadow border border-slate-200/60';
         
         wrapper.appendChild(img);
-        
-        // Add "NEW" badge for the first (most recent) sample
-        if (index === 0) {
-          const badge = document.createElement('div');
-          badge.className = 'absolute -top-2 -right-2 bg-gradient-to-r from-accent-500 to-pink-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg border-2 border-white animate-pulse';
-          badge.textContent = 'NEW';
-          wrapper.appendChild(badge);
-        }
         
         container.appendChild(wrapper);
       });
