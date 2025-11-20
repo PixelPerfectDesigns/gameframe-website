@@ -169,7 +169,35 @@
   <!-- Samples -->
   <section id="samples" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
     <h2 class="text-2xl sm:text-3xl font-bold text-center">Recent Samples</h2>
-    <div class="mt-6 samples-container">
+    
+    <!-- Mobile scroll hint -->
+    <div class="text-center mb-6 mt-4 sm:hidden">
+      <p class="text-slate-600 text-sm flex items-center justify-center gap-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18"/>
+        </svg>
+        Swipe to see more samples
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+        </svg>
+      </p>
+    </div>
+    
+    <div class="mt-6 samples-container relative">
+      <!-- Left scroll arrow for desktop -->
+      <button id="samples-scroll-left" class="hidden sm:flex absolute left-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white/90 hover:bg-white shadow-lg rounded-full items-center justify-center transition-all duration-300 opacity-0" aria-label="Scroll left">
+        <svg class="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+        </svg>
+      </button>
+      
+      <!-- Right scroll arrow for desktop -->
+      <button id="samples-scroll-right" class="hidden sm:flex absolute right-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white/90 hover:bg-white shadow-lg rounded-full items-center justify-center transition-all duration-300" aria-label="Scroll right">
+        <svg class="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </button>
+      
       <!-- Mobile: Full-width carousel -->
       <div id="recent-samples" class="flex gap-4 overflow-x-auto pb-4 sm:flex-wrap sm:justify-center sm:overflow-visible sm:pb-0 sm:gap-6 snap-x snap-mandatory" style="-webkit-overflow-scrolling: touch; scrollbar-width: none; -ms-overflow-style: none;">
         <!-- Recent samples will be loaded here by JavaScript -->
@@ -794,25 +822,35 @@
       
       const recentSamples = allSamples.slice(0, maxRecentSamples);
       
-      recentSamples.forEach((filename, index) => {
+      // Create images three times for infinite loop (previous, current, next)
+      const allImages = [...recentSamples, ...recentSamples, ...recentSamples];
+      
+      allImages.forEach((filename, index) => {
         // Create wrapper div for positioning the badge
         const wrapper = document.createElement('div');
         wrapper.className = 'relative';
         
         const img = document.createElement('img');
         img.src = `media/${filename}`;
-        img.alt = `Sample ${index + 1}`;
-        img.className = 'w-[calc(100vw-2rem)] max-w-sm sm:w-56 flex-shrink-0 snap-center object-contain transition-transform duration-500 hover:scale-[1.03] hover:shadow-2xl hover:shadow-brand-500/30 rounded-2xl shadow border border-slate-200/60';
+        img.alt = `Sample ${(index % recentSamples.length) + 1}`;
+        img.className = 'w-[calc(100vw-2rem)] max-w-sm sm:w-56 flex-shrink-0 snap-center object-contain transition-transform duration-500 sm:hover:scale-[1.03] hover:shadow-2xl hover:shadow-brand-500/30 rounded-2xl shadow border border-slate-200/60';
         
         wrapper.appendChild(img);
-        
         container.appendChild(wrapper);
       });
+      
+      // Set initial scroll position to the middle set of images
+      setTimeout(() => {
+        const containerWidth = container.scrollWidth / 3;
+        container.scrollLeft = containerWidth;
+        setupInfiniteScroll(container, recentSamples.length);
+      }, 50);
     }
 
     // Initialize when page loads
     document.addEventListener('DOMContentLoaded', function() {
       loadRecentSamples();
+      setupSamplesScrollArrows();
       
       // Intersection Observer for animations
       const observer = new IntersectionObserver((entries) => {
@@ -828,6 +866,63 @@
         observer.observe(el);
       });
     });
+    
+    // Setup infinite scroll for seamless looping
+    function setupInfiniteScroll(container, itemCount) {
+      let isScrolling = false;
+      
+      container.addEventListener('scroll', () => {
+        if (isScrolling) return;
+        
+        const scrollLeft = container.scrollLeft;
+        const scrollWidth = container.scrollWidth;
+        const clientWidth = container.clientWidth;
+        const sectionWidth = scrollWidth / 3;
+        
+        // If scrolled to the beginning of first section, jump to beginning of last section
+        if (scrollLeft <= 0) {
+          isScrolling = true;
+          container.scrollLeft = sectionWidth * 2;
+          setTimeout(() => { isScrolling = false; }, 50);
+        }
+        // If scrolled to the end of last section, jump to end of first section  
+        else if (scrollLeft >= scrollWidth - clientWidth) {
+          isScrolling = true;
+          container.scrollLeft = sectionWidth;
+          setTimeout(() => { isScrolling = false; }, 50);
+        }
+      });
+    }
+    
+    // Setup scroll arrows for recent samples with infinite scroll support
+    function setupSamplesScrollArrows() {
+      const gallery = document.getElementById('recent-samples');
+      const leftBtn = document.getElementById('samples-scroll-left');
+      const rightBtn = document.getElementById('samples-scroll-right');
+      
+      if (!gallery || !leftBtn || !rightBtn) return;
+      
+      // For infinite scroll, always show both arrows
+      function updateArrowVisibility() {
+        leftBtn.style.opacity = '1';
+        rightBtn.style.opacity = '1';
+      }
+      
+      // Scroll functionality
+      leftBtn.addEventListener('click', () => {
+        gallery.scrollBy({ left: -300, behavior: 'smooth' });
+      });
+      
+      rightBtn.addEventListener('click', () => {
+        gallery.scrollBy({ left: 300, behavior: 'smooth' });
+      });
+      
+      // Update arrow visibility on scroll
+      gallery.addEventListener('scroll', updateArrowVisibility);
+      
+      // Initial arrow visibility update
+      setTimeout(updateArrowVisibility, 100);
+    }
   </script>
 
   <!-- Sticky Facebook Messenger Button -->

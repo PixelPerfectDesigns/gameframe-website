@@ -26,6 +26,35 @@
     .hover-glow:hover { box-shadow: 0 10px 30px rgba(235,42,116,.35), 0 6px 16px rgba(2,6,23,.35); transform: translateY(-2px); }
     .revealable { opacity: 0; transform: translateY(12px); transition: opacity .6s ease, transform .6s cubic-bezier(.22,1,.36,1); }
     .revealed { opacity: 1; transform: none; }
+    
+    /* Hide scrollbar for horizontal scroll */
+    #portfolio-gallery::-webkit-scrollbar { display: none; }
+    #portfolio-gallery { scrollbar-width: none; -ms-overflow-style: none; }
+    
+    /* Fade effect to indicate more content on desktop only */
+    .gallery-container { position: relative; }
+    .gallery-container::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 20px;
+      height: 100%;
+      background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.8));
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    @media (min-width: 640px) {
+      .gallery-container::after { opacity: 1; }
+    }
+    
+    /* Smooth snap scrolling for mobile carousel */
+    @supports (scroll-snap-type: x mandatory) {
+      #portfolio-gallery {
+        scroll-snap-type: x mandatory;
+      }
+    }
   </style>
 </head>
 <body class="bg-slate-50 text-slate-900 font-sans">
@@ -59,8 +88,37 @@
   <!-- Portfolio Gallery -->
   <section class="py-20 bg-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div id="portfolio-gallery" class="mt-6 flex flex-wrap justify-center gap-6">
-        <!-- All portfolio samples will be loaded here by JavaScript -->
+      <!-- Mobile scroll hint -->
+      <div class="text-center mb-6 sm:hidden">
+        <p class="text-slate-600 text-sm flex items-center justify-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18"/>
+          </svg>
+          Swipe to explore our portfolio
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+          </svg>
+        </p>
+      </div>
+      
+      <div class="gallery-container relative">
+        <!-- Left scroll arrow for desktop -->
+        <button id="scroll-left" class="hidden sm:flex absolute left-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white/90 hover:bg-white shadow-lg rounded-full items-center justify-center transition-all duration-300 opacity-0" aria-label="Scroll left">
+          <svg class="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+          </svg>
+        </button>
+        
+        <!-- Right scroll arrow for desktop -->
+        <button id="scroll-right" class="hidden sm:flex absolute right-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white/90 hover:bg-white shadow-lg rounded-full items-center justify-center transition-all duration-300" aria-label="Scroll right">
+          <svg class="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+          </svg>
+        </button>
+        
+        <div id="portfolio-gallery" class="flex gap-4 overflow-x-auto pb-4 sm:flex-wrap sm:justify-center sm:overflow-visible sm:pb-0 sm:gap-6 snap-x snap-mandatory" style="-webkit-overflow-scrolling: touch; scrollbar-width: none; -ms-overflow-style: none;">
+          <!-- All portfolio samples will be loaded here by JavaScript -->
+        </div>
       </div>
     </div>
   </section>
@@ -176,17 +234,9 @@
         const img = document.createElement('img');
         img.src = `media/${filename}`;
         img.alt = `Sample ${index + 1}`;
-        img.className = 'w-56 object-contain transition-transform duration-500 hover:scale-[1.03] hover:shadow-2xl hover:shadow-brand-500/30 rounded-2xl shadow border border-slate-200/60 revealable';
+        img.className = 'w-[calc(100vw-2rem)] max-w-sm sm:w-56 flex-shrink-0 snap-center object-contain transition-transform duration-500 sm:hover:scale-[1.03] hover:shadow-2xl hover:shadow-brand-500/30 rounded-2xl shadow border border-slate-200/60';
         
         wrapper.appendChild(img);
-        
-        // Add "NEW" badge for the first (most recent) sample
-        if (index === 0) {
-          const badge = document.createElement('div');
-          badge.className = 'absolute -top-2 -right-2 bg-gradient-to-r from-accent-500 to-pink-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg border-2 border-white animate-pulse';
-          badge.textContent = 'NEW';
-          wrapper.appendChild(badge);
-        }
         
         container.appendChild(wrapper);
       });
@@ -212,6 +262,7 @@
     // Initialize when page loads
     document.addEventListener('DOMContentLoaded', function() {
       loadPortfolioSamples();
+      setupScrollArrows();
       
       // Intersection Observer for animations
       const observer = new IntersectionObserver((entries) => {
@@ -230,6 +281,37 @@
         });
       }, 100);
     });
+    
+    // Setup scroll arrows for desktop
+    function setupScrollArrows() {
+      const gallery = document.getElementById('portfolio-gallery');
+      const leftBtn = document.getElementById('scroll-left');
+      const rightBtn = document.getElementById('scroll-right');
+      
+      if (!gallery || !leftBtn || !rightBtn) return;
+      
+      // Show/hide arrows based on scroll position
+      function updateArrowVisibility() {
+        const { scrollLeft, scrollWidth, clientWidth } = gallery;
+        leftBtn.style.opacity = scrollLeft > 0 ? '1' : '0';
+        rightBtn.style.opacity = scrollLeft < scrollWidth - clientWidth - 10 ? '1' : '0';
+      }
+      
+      // Scroll functionality
+      leftBtn.addEventListener('click', () => {
+        gallery.scrollBy({ left: -300, behavior: 'smooth' });
+      });
+      
+      rightBtn.addEventListener('click', () => {
+        gallery.scrollBy({ left: 300, behavior: 'smooth' });
+      });
+      
+      // Update arrow visibility on scroll
+      gallery.addEventListener('scroll', updateArrowVisibility);
+      
+      // Initial arrow visibility update
+      setTimeout(updateArrowVisibility, 100);
+    }
   </script>
 </body>
 </html>
